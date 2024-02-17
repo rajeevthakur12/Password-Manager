@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/css/login.css"/>
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Secure Password Manager</h1>
+        <p>Securely store and manage all your passwords in one place.</p>
+        <form action="/join/login" method="post" id="form">
+          <%- include('./partials/messages.ejs') %>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" id="email" placeholder="Enter your username" name="username" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          </div>
+          <div class="form-group">
+            <button type="submit">Login</button>
+          </div>
+
+          <div class="form-group">
+            <p>Don't have an account? <a href="/join/register">Signup</a></p>
+          </div>
+        </form>
+      </div>
+      <div class="picture">
+        <img src="picture.jpg" alt="">
+      </div>
+    </div>
+
+    <script src="/js/login.js" type="module"></script>
+  </body>
+</html>

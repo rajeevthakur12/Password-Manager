@@ -1,0 +1,27 @@
+CREATE DATABASE mypassword;
+
+USE mypassword;
+
+CREATE TABLE USER (
+    id INT8 AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(256) NOT NULL UNIQUE,
+    password VARCHAR(1024) NOT NULL,
+    createdDate VARCHAR(255) NOT NULL 
+);
+
+DESCRIBE USER;
+
+CREATE TABLE RECORD (
+    id INT8 AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(2083) NOT NULL,
+    login VARCHAR(2083) NOT NULL,
+    password VARCHAR(2083) NOT NULL,
+    websiteAddress VARCHAR(2083) NOT NULL,
+    note VARCHAR(2083),
+    lastModifiedAt VARCHAR(255) NOT NULL,
+    username VARCHAR(256) NOT NULL,
+    FOREIGN KEY (username) REFERENCES USER(username)
+);
+
+DESCRIBE RECORD;
+

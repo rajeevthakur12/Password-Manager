@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/vault.css">
+
+</head>
+
+<body>
+
+    <!-- navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color:#6b02d4 !important;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/logout" style="color: rgb(255, 255, 255);">Logout</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+
+                    <li class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="username" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false" style="color: rgb(255, 255, 255); vertical-align: top;">
+                            <span class="material-icons" style="vertical-align: -0.5pc;">
+                                person_pin
+                            </span>
+                            <%= user.username %>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="logout"><span class="material-icons"
+                                        style="vertical-align: bottom;">
+                                        power_settings_new
+                                    </span>Logout</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- sidebar -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="sidebar">
+                <ul class="nav nav-sidebar">
+                    <div class="sidebar-logo">
+                        <!-- Example single danger button -->
+                        <div class="btn-group">
+                            <button type="button" id="masterkeybutton" onclick="checkmasterkey()"
+                                class="btn btn-info dropdown-toggle" data-toggle="modal" data-target="#add-secret-modal">
+                                <span class="material-icons" style="vertical-align: bottom;">add</span> New
+
+                            </button>
+                        </div>
+                    </div>
+
+                    <a href="javascript:viewVault()" class="sidebar-links">
+                        <div class="sidebar-logo">
+                            <span class="material-icons" style="vertical-align: bottom;">
+                                lock
+                            </span> Show Records
+                        </div>
+                    </a>
+                    <div id="master">
+                        <p>_______________________________________________________</p>
+                        <p id="masterkeyerror" style="color:rgb(7, 3, 3);font-size:17px;" align="center">Enter Master
+                            Key</p>
+                        <input id="masterkey" type="password" placeholder="MasterKey" />
+                        <input id="repeatmasterkey" type="password" placeholder="Confirm MasterKey" />
+                        <p>_______________________________________________________</p>
+                    </div>
+                </ul>
+            </div>
+
+            <div class="col-sm-12 main">
+                <div class="row">
+                    <h3 class="page-header" style="cursor: pointer;" onclick="viewVault()"><span
+                            class="material-icons" style="vertical-align: bottom; font-size: 25px;">
+                            person
+                        </span>Secrets</h3>
+                    <table class="table table-striped table-hover" style="font-size: smaller;">
+                        <div id="system-msg" role="alert" disabled>
+
+                        </div>
+                        <thead>
+                            <tr>
+                                <th scope="col">TITLE</th>
+                                <th scope="col">LAST MODIFIED</th>
+                                <th scope="col">NOTE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-records">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal for to add secret -->
+    <div class="modal" id="add-secret-modal" tabindex="-1" role="dialog" aria-labelledby="add-secret"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Record</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="add-secret-msg" role="alert" disabled>
+
+                    </div>
+
+                    <form action="#" id="add-secret">
+
+                        <div class="form-group">
+                            <input type="text" placeholder="Enter Title" name="title" id="title"
+                                class="form-control form-control-lg" autocomplete="off" required />
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" placeholder="Enter Your Email or Username" name="login" id="s-login"
+                                class="form-control form-control-lg" autocomplete="off" required />
+                            <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone -->
+                            <!-- else.</small> -->
+                        </div>
+
+                        <span class="material-icons key">
+                            vpn_key
+                        </span>
+                        <div class="form-group">
+                            <input type="password" name="password" placeholder="Type or Generate Password"
+                                id="s-password" class="form-control form-control-lg" autocomplete="off" required />
+                            <span class="material-icons field-icon" onclick="passwordEye(this, `s-password`)">
+                                visibility
+                            </span>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" placeholder="https://" name="website_address" id="s-website_address"
+                                class="form-control form-control-lg" autocomplete="off" required />
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" placeholder="Keep note" name="note" id="s-note"
+                                class="form-control form-control-lg" autocomplete="off" required />
+                        </div</form>
+                        <div class="form-group">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary form-control-lg"
+                                    data-dismiss="modal">Close</button>
+                                <button type="submit" name="secretSubmit" class="btn form-control-lg btn-primary">SAVE
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal for to Show decrypted secret -->
+    <div class="modal" id="update-secret-modal" tabindex="-1" role="dialog" aria-labelledby="update-secret"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center;">
+
+                    <h5 class="modal-title  w-100" id="record-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    <span data-toggle="popover" id="record-id" title="RECORD ID" class="close material-icons"
+                        style="color: rgb(255, 153, 0);">
+                        info
+                    </span>
+                </div>
+                <div class="modal-body">
+
+                    <nav>
+
+                        <ul class="nav nav-tabs" id="nav-tab">
+                            <li class="active">
+                                <a id="nav-details-tab" data-toggle="tab" href="#nav-details" role="tab"
+                                    aria-controls="nav-details" aria-selected="true">Details</a>
+                            </li>
+
+                        </ul>
+                    </nav>
+
+                    <div class="tab-content" id="nav-tabContent">
+
+                        <div class="tab-pane fade in active" id="nav-details">
+                            <div id="show-secret-details-msg" role="alert" disabled>
+
+                            </div>
+                            <form action="#" id="update-secret">
+
+                                <div class="form-group">
+                                    <label for="u-login" class="fs1">LOGIN</label>
+                                    <input type="text" placeholder="Enter Your Email or Username" name="login"
+                                        id="u-login" class="form-control form-control-lg" autocomplete="off"
+                                        required />
+                                    <small id="emailHelp" class="form-text text-muted">We'll never share your email
+                                        with anyone
+                                        else.</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <span class="material-icons key">
+                                        vpn_key
+                                    </span>
+                                    <label for="u-password" class="fs1">PASSWORD</label>
+                                    <input type="password" name="password" placeholder="Type or Generate Password"
+                                        id="u-password" class="form-control form-control-lg" autocomplete="off"
+                                        required />
+                                    <span class="material-icons field-icon" onclick="passwordEye(this, `u-password`)">
+                                        visibility
+                                    </span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="u-website_address" class="fs1">WEBSITE ADDRESS</label>
+                                    <input type="text" placeholder="https://" name="website_address"
+                                        id="u-website_address" class="form-control form-control-lg" autocomplete="off"
+                                        required />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="u-note" class="fs1" style="color: black;">NOTE</label>
+                                    <input type="text" placeholder="Keep note" name="note" id="u-note"
+                                        class="form-control form-control-lg" autocomplete="off" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="modal-footer">
+                                        <button id="closerecord" type="button" onclick="javascript:"
+                                            class="btn btn-secondary form-control-lg" data-dismiss="modal">Close</button>
+                                        <button type="submit" id="secretUpdate"
+                                            class="btn form-control-lg btn-primary" disabled>SAVE CHANGES</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane" id="nav-access-secret">
+                            <div id="show-secret-share-details-msg" role="alert" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Model for user settings -->
+    <div class="modal" id="user-settings" tabindex="-1" role="dialog" aria-labelledby="user-settings"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="user-settings">Security</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body fs0">
+
+
+                    <div class="custom-control custom-switch top7">
+                        <input type="checkbox" class="custom-control-input" id="decryption" checked>
+                        <label class="custom-control-label" for="decryption">DECRYPTION</label>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <script src="/js/record.js" type="module"></script>
+    <script src="/js/passwordGenerator.js" type="module"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"
+        integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        function passwordEye(eye, id) {
+
+            if (eye.innerHTML == 'visibility_off') {
+                eye.innerHTML = 'visibility';
+                document.getElementById(id).type = "password";
+                return;
+            }
+            eye.innerHTML = 'visibility_off';
+            document.getElementById(id).type = "text";
+        };
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+
+        function checkmasterkey() {
+            let masterkey = document.getElementById('masterkey')
+            let master = document.getElementById('master')
+            let masterkeybutton = document.getElementById('masterkeybutton')
+            let repeatmasterkey = document.getElementById('repeatmasterkey')
+            let masterkeyerror = document.getElementById('masterkeyerror')
+
+            if (masterkey.value.trim() == '') {
+                masterkeyerror.innerHTML = 'Enter Master Key'
+                masterkeyerror.style.color = 'blue'
+                masterkeybutton.setAttribute("data-target", "#");
+                alert('Enter master key')
+            }
+
+            else if (masterkey.value != repeatmasterkey.value) {
+                masterkeyerror.innerHTML ='Key Not Matching'
+                masterkeyerror.style.color = 'red'
+                masterkeybutton.setAttribute("data-target", "#");
+                cls()
+            }
+
+            else {
+                let masterPassword = masterkey.value
+                masterkeybutton.setAttribute("data-target", "#add-secret-modal");
+                return false
+            }
+        }
+
+        function cls() {
+            masterkey.value = ''
+            repeatmasterkey.value = ''
+        }
+    </script>
+</body>
+
+</html>
